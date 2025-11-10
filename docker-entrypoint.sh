@@ -11,7 +11,7 @@ if [ ! -f ".env" ]; then
     cat <<'EOF' > .env
 APP_NAME=Laravel
 APP_ENV=production
-APP_KEY=
+APP_KEY=base64:1owBFFGt6c+lMNDzlEWk7J1iNL4sd9RFDRAGMY01+VU=
 APP_DEBUG=false
 APP_URL=http://localhost
 
