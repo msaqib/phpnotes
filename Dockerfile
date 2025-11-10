@@ -3,20 +3,15 @@ FROM php:8.2-apache AS build
 WORKDIR /app
 
 # System deps and PHP extensions required by Laravel
-
-
-    
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        git unzip libzip-dev libxml2-dev libonig-dev libsqlite3-dev \
+        git unzip libzip-dev libxml2-dev libonig-dev libpq-dev \
     && docker-php-ext-install \
         bcmath \
         mbstring \
         pdo \
-        pdo_mysql \
-        pdo_sqlite \
+        pdo_pgsql \
         xml \
-    && apt-get purge -y libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Composer from official image
@@ -47,14 +42,11 @@ RUN apt-get update \
         libzip-dev \
         libxml2-dev \
         libonig-dev \
-        libsqlite3-dev \
     && docker-php-ext-install \
         bcmath \
         mbstring \
         pdo \
-        pdo_mysql \
         pdo_pgsql \
-        pdo_sqlite \
         xml \
         zip \
     && a2enmod rewrite \
@@ -74,14 +66,10 @@ COPY --from=build /app/vendor ./vendor
 RUN mkdir -p storage/framework/{sessions,views,cache} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
-    && mkdir -p database \
-    && touch database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/database \
     && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod 664 /var/www/html/database/database.sqlite
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
 # Clear Laravel config and route cache to ensure changes take effect
 RUN rm -f bootstrap/cache/*.php 2>/dev/null || true \

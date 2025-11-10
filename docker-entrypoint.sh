@@ -11,7 +11,7 @@ if [ ! -f ".env" ]; then
     cat <<'EOF' > .env
 APP_NAME=Laravel
 APP_ENV=production
-APP_KEY=base64:1owBFFGt6c+lMNDzlEWk7J1iNL4sd9RFDRAGMY01+VU=
+APP_KEY=
 APP_DEBUG=false
 APP_URL=http://localhost
 
@@ -19,8 +19,19 @@ LOG_CHANNEL=stack
 LOG_LEVEL=debug
 
 DB_CONNECTION=pgsql
-DB_DATABASE=/database/database.sqlite
+DB_DATABASE=
 EOF
+  fi
+fi
+
+# If APP_KEY is provided via environment variable, ensure .env reflects it
+if [ -n "${APP_KEY:-}" ]; then
+  escaped_app_key=${APP_KEY//\\/\\\\}
+  escaped_app_key=${escaped_app_key//\//\\/}
+  if grep -q '^APP_KEY=' .env; then
+    sed -i "s/^APP_KEY=.*/APP_KEY=${escaped_app_key}/" .env
+  else
+    printf "\nAPP_KEY=%s\n" "$APP_KEY" >> .env
   fi
 fi
 
@@ -40,15 +51,6 @@ mkdir -p storage/framework/{cache,views,sessions} \
   bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache || true
 chmod -R 775 storage bootstrap/cache || true
-
-DB_FILE="${DB_DATABASE:-/database/database.sqlite}"
-DB_DIR="$(dirname "$DB_FILE")"
-
-mkdir -p "$DB_DIR"
-touch "$DB_FILE"
-chown www-data:www-data "$DB_DIR" "$DB_FILE" || true
-chmod 775 "$DB_DIR" || true
-chmod 664 "$DB_FILE" || true
 
 # Run migrations
 php artisan migrate --force --no-interaction
