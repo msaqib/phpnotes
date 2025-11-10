@@ -18,7 +18,7 @@ APP_URL=http://localhost
 LOG_CHANNEL=stack
 LOG_LEVEL=debug
 
-DB_CONNECTION=sqlite
+DB_CONNECTION=pgsql
 DB_DATABASE=/database/database.sqlite
 EOF
   fi

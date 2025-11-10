@@ -4,9 +4,7 @@ WORKDIR /app
 
 # System deps and PHP extensions required by Laravel
 
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    && docker-php-ext-install pdo_pgsql
+
     
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -45,6 +43,7 @@ WORKDIR /var/www/html
 # Keeping dev packages to avoid runtime dependency issues (minimal size impact)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        libpq-dev \
         libzip-dev \
         libxml2-dev \
         libonig-dev \
@@ -54,6 +53,7 @@ RUN apt-get update \
         mbstring \
         pdo \
         pdo_mysql \
+        pdo_pgsql \
         pdo_sqlite \
         xml \
         zip \
@@ -91,8 +91,7 @@ RUN rm -f bootstrap/cache/*.php 2>/dev/null || true \
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV SESSION_DRIVER=file
-ENV DB_CONNECTION=sqlite
-ENV DB_DATABASE=/database/database.sqlite
+ENV DB_CONNECTION=pgsql
 
 # Copy and set up entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
