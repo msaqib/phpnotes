@@ -81,6 +81,8 @@ ENV APP_DEBUG=false
 ENV SESSION_DRIVER=file
 ENV DB_CONNECTION=pgsql
 
+RUN sed -i 's/^Listen .*/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
+
 # Copy and set up entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
