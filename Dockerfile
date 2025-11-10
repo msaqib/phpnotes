@@ -3,6 +3,11 @@ FROM php:8.2-apache AS build
 WORKDIR /app
 
 # System deps and PHP extensions required by Laravel
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo_pgsql
+    
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git unzip libzip-dev libxml2-dev libonig-dev libsqlite3-dev \
