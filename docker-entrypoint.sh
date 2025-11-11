@@ -35,16 +35,6 @@ if [ -n "${APP_KEY:-}" ]; then
   fi
 fi
 
-# Ensure application key exists
-KEY_VALUE=$(php -r 'echo preg_match("/^APP_KEY=\s*$/m", file_get_contents(".env")) ? "" : "exists";')
-
-if [ -z "$KEY_VALUE" ]; then
-  if ! php artisan key:generate --force --no-interaction; then
-    echo "Failed to generate APP_KEY. Inserting placeholder value."
-    sed -i 's/^APP_KEY=.*$/APP_KEY=base64:FAKEKEYFORDEV==/' .env || echo "APP_KEY=base64:FAKEKEYFORDEV==" >> .env
-  fi
-fi
-
 # Ensure storage directories exist with correct permissions
 mkdir -p storage/framework/{cache,views,sessions} \
   storage/logs \
